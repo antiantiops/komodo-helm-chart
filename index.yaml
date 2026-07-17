@@ -3,9 +3,9 @@ entries:
   komodo:
   - apiVersion: v2
     appVersion: 2.2.0
-    created: "2026-07-17T10:39:45.159863334Z"
+    created: "2026-07-17T10:39:56.346835518Z"
     description: Komodo Core with MongoDB
-    digest: 1a10c73822016b98c7016337ca0dbd09e39a1940de78d0cd11a35366fc7d7d3a
+    digest: f383b27ae2f587db0b655a81e0a3d427affaf217cef05b6a91ca2b9db8236c79
     home: https://komo.do/
     keywords:
     - komodo
@@ -20,4 +20,4 @@ entries:
     urls:
     - https://antiantiops.github.io/komodo-helm-chart/komodo-0.1.0.tgz
     version: 0.1.0
-generated: "2026-07-17T10:39:45.158776957Z"
+generated: "2026-07-17T10:39:56.346291009Z"
