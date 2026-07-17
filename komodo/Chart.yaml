@@ -9,6 +9,7 @@ keywords:
   - mongodb
   - devops
 home: https://komo.do/
+icon: https://raw.githubusercontent.com/moghtech/komodo/main/ui/public/apple-touch-icon.png
 sources:
   - https://github.com/moghtech/komodo
 maintainers:
