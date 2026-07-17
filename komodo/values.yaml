@@ -1,0 +1,74 @@
+nameOverride: ""
+fullnameOverride: ""
+existingSecret:
+  name: ""
+
+komodo:
+  image:
+    repository: ghcr.io/moghtech/komodo-core
+    tag: "2.2.0"
+    pullPolicy: IfNotPresent
+  replicas: 1
+  host: "http://komodo.local"
+  localAuth: true
+  timezone: Asia/Ho_Chi_Minh
+  auth:
+    initAdminUsername: admin
+    initAdminPassword: ""
+    jwtSecret: ""
+    passkey: ""
+    webhookSecret: ""
+  service:
+    type: ClusterIP
+    port: 9120
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+    hosts:
+      - host: komodo.example.com
+        paths:
+          - path: /
+            pathType: Prefix
+    tls: []
+  persistence:
+    config:
+      enabled: true
+      size: 1Gi
+      storageClass: ""
+      accessModes: [ReadWriteOnce]
+    repoCache:
+      enabled: true
+      size: 10Gi
+      storageClass: ""
+      accessModes: [ReadWriteOnce]
+  resources: {}
+  podSecurityContext:
+    fsGroup: 1000
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: [ALL]
+    readOnlyRootFilesystem: false
+    runAsNonRoot: false
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+mongo:
+  image:
+    repository: mongo
+    tag: "8"
+    pullPolicy: IfNotPresent
+  auth:
+    rootUsername: komodo
+    rootPassword: ""
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: ""
+    accessModes: [ReadWriteOnce]
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}

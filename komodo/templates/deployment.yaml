@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "komodo.fullname" . }}
+  labels:
+    {{- include "komodo.labels" . | nindent 4 }}
+    app.kubernetes.io/component: core
+spec:
+  replicas: {{ .Values.komodo.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "komodo.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: core
+  template:
+    metadata:
+      labels:
+        {{- include "komodo.labels" . | nindent 8 }}
+        app.kubernetes.io/component: core
+    spec:
+      securityContext:
+        {{- toYaml .Values.komodo.podSecurityContext | nindent 8 }}
+      {{- with .Values.komodo.nodeSelector }}
+      nodeSelector: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.komodo.affinity }}
+      affinity: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.komodo.tolerations }}
+      tolerations: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: komodo-core
+          image: "{{ .Values.komodo.image.repository }}:{{ .Values.komodo.image.tag }}"
+          imagePullPolicy: {{ .Values.komodo.image.pullPolicy }}
+          args: [core]
+          securityContext:
+            {{- toYaml .Values.komodo.securityContext | nindent 12 }}
+          ports:
+            - name: http
+              containerPort: 9120
+          env:
+            - name: TZ
+              value: {{ .Values.komodo.timezone | quote }}
+            - name: KOMODO_HOST
+              value: {{ required "komodo.host is required" .Values.komodo.host | quote }}
+            - name: KOMODO_LOCAL_AUTH
+              value: {{ .Values.komodo.localAuth | quote }}
+            - name: KOMODO_DATABASE_ADDRESS
+              value: {{ printf "%s:27017" (include "komodo.mongoName" .) | quote }}
+            - name: KOMODO_DATABASE_USERNAME
+              value: {{ .Values.mongo.auth.rootUsername | quote }}
+            - name: KOMODO_DATABASE_PASSWORD
+              valueFrom: { secretKeyRef: { name: {{ include "komodo.secretName" . }}, key: mongo-root-password } }
+            - name: KOMODO_INIT_ADMIN_USERNAME
+              value: {{ .Values.komodo.auth.initAdminUsername | quote }}
+            - name: KOMODO_INIT_ADMIN_PASSWORD
+              valueFrom: { secretKeyRef: { name: {{ include "komodo.secretName" . }}, key: komodo-init-admin-password } }
+            - name: KOMODO_JWT_SECRET
+              valueFrom: { secretKeyRef: { name: {{ include "komodo.secretName" . }}, key: komodo-jwt-secret } }
+            - name: KOMODO_PASSKEY
+              valueFrom: { secretKeyRef: { name: {{ include "komodo.secretName" . }}, key: komodo-passkey } }
+            - name: KOMODO_WEBHOOK_SECRET
+              valueFrom: { secretKeyRef: { name: {{ include "komodo.secretName" . }}, key: komodo-webhook-secret } }
+          readinessProbe:
+            tcpSocket: { port: http }
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket: { port: http }
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          resources:
+            {{- toYaml .Values.komodo.resources | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: repo-cache
+              mountPath: /repo-cache
+      volumes:
+        - name: config
+          {{- if .Values.komodo.persistence.config.enabled }}
+          persistentVolumeClaim: { claimName: {{ include "komodo.fullname" . }}-config }
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        - name: repo-cache
+          {{- if .Values.komodo.persistence.repoCache.enabled }}
+          persistentVolumeClaim: { claimName: {{ include "komodo.fullname" . }}-repo-cache }
+          {{- else }}
+          emptyDir: {}
+          {{- end }}

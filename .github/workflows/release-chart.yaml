@@ -1,0 +1,26 @@
+name: Release Helm chart
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: azure/setup-helm@v4
+      - name: Lint
+        run: helm lint komodo
+      - name: Package and publish index
+        run: |
+          helm package komodo
+          helm repo index . --url https://antiantiops.github.io/komodo-helm-chart
+      - name: Commit published chart
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add index.yaml komodo-*.tgz
+          git diff --cached --quiet || git commit -m 'chore: publish chart'
+          git push

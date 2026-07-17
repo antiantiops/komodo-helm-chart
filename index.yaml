@@ -1,0 +1,23 @@
+apiVersion: v1
+entries:
+  komodo:
+  - apiVersion: v2
+    appVersion: 2.2.0
+    created: "2026-07-17T10:13:25.078735806Z"
+    description: Komodo Core with MongoDB
+    digest: 67d64a8ee90f533b6e62ac2027e242e9b15614dceca70ef5c0fc4263021017fa
+    home: https://komo.do/
+    keywords:
+    - komodo
+    - mongodb
+    - devops
+    maintainers:
+    - name: antiantiops
+    name: komodo
+    sources:
+    - https://github.com/moghtech/komodo
+    type: application
+    urls:
+    - https://antiantiops.github.io/komodo-helm-chart/komodo-0.1.0.tgz
+    version: 0.1.0
+generated: "2026-07-17T10:13:25.077735981Z"
