@@ -12,7 +12,13 @@ jobs:
         with: { fetch-depth: 0 }
       - uses: azure/setup-helm@v4
       - name: Lint
-        run: helm lint komodo
+        run: |
+          helm lint komodo \
+            --set komodo.auth.initAdminPassword=ci-test \
+            --set komodo.auth.jwtSecret=ci-test \
+            --set komodo.auth.passkey=ci-test \
+            --set komodo.auth.webhookSecret=ci-test \
+            --set mongo.auth.rootPassword=ci-test
       - name: Package and publish index
         run: |
           helm package komodo
