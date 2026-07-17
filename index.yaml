@@ -3,10 +3,11 @@ entries:
   komodo:
   - apiVersion: v2
     appVersion: 2.2.0
-    created: "2026-07-17T11:01:51.718864202Z"
+    created: "2026-07-17T11:04:36.548215509Z"
     description: Komodo Core with MongoDB
-    digest: 1b59a8df8b914bcdc77dcd544c8e938c5ad9f63bc8baf70eb898499da8af0d4a
+    digest: a1f7ed40680e12f5a98bd51f7f1c4213a967942ec91f831079a89a1a2968cdc2
     home: https://komo.do/
+    icon: https://raw.githubusercontent.com/moghtech/komodo/main/ui/public/apple-touch-icon.png
     keywords:
     - komodo
     - mongodb
@@ -20,4 +21,4 @@ entries:
     urls:
     - https://antiantiops.github.io/komodo-helm-chart/komodo-0.1.0.tgz
     version: 0.1.0
-generated: "2026-07-17T11:01:51.718219626Z"
+generated: "2026-07-17T11:04:36.547642249Z"
