@@ -1,0 +1,55 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: komodo
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: komodo
+spec:
+  project: default
+  source:
+    repoURL: https://antiantiops.github.io/komodo-helm-chart
+    chart: komodo
+    targetRevision: 0.1.0
+    helm:
+      releaseName: komodo
+      values: |
+        existingSecret:
+          name: komodo-auth
+
+        komodo:
+          host: http://komodo.nimtechnology.com
+          localAuth: true
+          timezone: Asia/Ho_Chi_Minh
+          ingress:
+            enabled: true
+            className: nginx
+            annotations: {}
+            hosts:
+              - host: komodo.nimtechnology.com
+                paths:
+                  - path: /
+                    pathType: Prefix
+            tls: []
+          persistence:
+            config:
+              enabled: true
+              size: 1Gi
+              storageClass: longhorn
+            repoCache:
+              enabled: true
+              size: 10Gi
+              storageClass: longhorn
+
+        mongo:
+          persistence:
+            enabled: true
+            size: 10Gi
+            storageClass: longhorn
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: komodo
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
