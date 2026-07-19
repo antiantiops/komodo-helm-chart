@@ -1,17 +1,32 @@
 name: Release Helm chart
+
 on:
   push:
     branches: [master]
+    # The release commit only changes these generated files; do not release again.
+    paths-ignore:
+      - index.yaml
+      - '*.tgz'
+
+# Prevent two master pushes from selecting the same latest tag concurrently.
+concurrency:
+  group: helm-chart-release-master
+  cancel-in-progress: false
+
 permissions:
   contents: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with: { fetch-depth: 0 }
+        with:
+          fetch-depth: 0
+
       - uses: azure/setup-helm@v4
-      - name: Lint
+
+      - name: Test chart
         run: |
           helm lint komodo \
             --set komodo.auth.initAdminPassword=ci-test \
@@ -19,14 +34,58 @@ jobs:
             --set komodo.auth.passkey=ci-test \
             --set komodo.auth.webhookSecret=ci-test \
             --set mongo.auth.rootPassword=ci-test
-      - name: Package and publish index
+          helm template komodo komodo \
+            --namespace komodo \
+            --set komodo.auth.initAdminPassword=ci-test \
+            --set komodo.auth.jwtSecret=ci-test \
+            --set komodo.auth.passkey=ci-test \
+            --set komodo.auth.webhookSecret=ci-test \
+            --set mongo.auth.rootPassword=ci-test \
+            > /tmp/komodo-manifests.yaml
+          test -s /tmp/komodo-manifests.yaml
+
+      - name: Calculate next patch version from Git tags
+        id: version
+        shell: bash
         run: |
-          helm package komodo
+          set -euo pipefail
+          git fetch --force --tags
+          latest_tag="$(git tag -l '[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname | head -n1)"
+          if [[ -z "$latest_tag" ]]; then
+            latest_tag="0.1.0"
+          fi
+          if ! [[ "$latest_tag" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Latest tag is not a stable X.Y.Z version: $latest_tag" >&2
+            exit 1
+          fi
+          IFS=. read -r major minor patch <<< "$latest_tag"
+          version="$major.$minor.$((patch + 1))"
+          echo "latest=$latest_tag" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Package chart with release version
+        run: |
+          helm package komodo \
+            --version '${{ steps.version.outputs.version }}' \
+            --destination .
           helm repo index . --url https://antiantiops.github.io/komodo-helm-chart
-      - name: Commit published chart
+
+      - name: Publish chart archive and index
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
+          set -euo pipefail
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add index.yaml komodo-*.tgz
-          git diff --cached --quiet || git commit -m 'chore: publish chart'
-          git push
+          git add "index.yaml" "komodo-${VERSION}.tgz"
+          git commit -m "chore: publish chart ${VERSION}"
+          git push origin HEAD:master
+
+      - name: Create source tag
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          SOURCE_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          git tag -a "$VERSION" "$SOURCE_SHA" -m "Helm chart $VERSION"
+          git push origin "refs/tags/$VERSION"
