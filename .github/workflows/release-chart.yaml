@@ -26,24 +26,6 @@ jobs:
 
       - uses: azure/setup-helm@v4
 
-      - name: Test chart
-        run: |
-          helm lint komodo \
-            --set komodo.auth.initAdminPassword=ci-test \
-            --set komodo.auth.jwtSecret=ci-test \
-            --set komodo.auth.passkey=ci-test \
-            --set komodo.auth.webhookSecret=ci-test \
-            --set mongo.auth.rootPassword=ci-test
-          helm template komodo komodo \
-            --namespace komodo \
-            --set komodo.auth.initAdminPassword=ci-test \
-            --set komodo.auth.jwtSecret=ci-test \
-            --set komodo.auth.passkey=ci-test \
-            --set komodo.auth.webhookSecret=ci-test \
-            --set mongo.auth.rootPassword=ci-test \
-            > /tmp/komodo-manifests.yaml
-          test -s /tmp/komodo-manifests.yaml
-
       - name: Calculate next patch version from Git tags
         id: version
         shell: bash
@@ -63,38 +45,61 @@ jobs:
           echo "latest=$latest_tag" >> "$GITHUB_OUTPUT"
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
-      - name: Package chart with release version
+      - name: Synchronize Chart.yaml version with release tag
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
-          helm package komodo \
-            --version '${{ steps.version.outputs.version }}' \
-            --destination .
+          set -euo pipefail
+          sed -i -E "s/^version: .*/version: ${VERSION}/" komodo/Chart.yaml
+          grep -Fx "version: ${VERSION}" komodo/Chart.yaml
+
+      - name: Test chart
+        run: |
+          helm lint komodo \
+            --set komodo.auth.initAdminPassword=ci-test \
+            --set komodo.auth.jwtSecret=ci-test \
+            --set komodo.auth.passkey=ci-test \
+            --set komodo.auth.webhookSecret=ci-test \
+            --set mongo.auth.rootPassword=ci-test
+          helm template komodo komodo \
+            --namespace komodo \
+            --set komodo.auth.initAdminPassword=ci-test \
+            --set komodo.auth.jwtSecret=ci-test \
+            --set komodo.auth.passkey=ci-test \
+            --set komodo.auth.webhookSecret=ci-test \
+            --set mongo.auth.rootPassword=ci-test \
+            > /tmp/komodo-manifests.yaml
+          test -s /tmp/komodo-manifests.yaml
+
+      - name: Package chart and refresh public index
+        run: |
+          helm package komodo --destination .
           helm repo index . --url https://antiantiops.github.io/komodo-helm-chart
 
-      - name: Publish chart archive and index
+      - name: Publish chart source, archive, and index
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
           set -euo pipefail
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add "index.yaml" "komodo-${VERSION}.tgz"
-          git commit -m "chore: publish chart ${VERSION}"
+          git add komodo/Chart.yaml index.yaml "komodo-${VERSION}.tgz"
+          git commit -m "chore: release chart ${VERSION}"
           git push origin HEAD:master
 
       - name: Create source tag
         env:
           VERSION: ${{ steps.version.outputs.version }}
-          SOURCE_SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
-          git tag -a "$VERSION" "$SOURCE_SHA" -m "Helm chart $VERSION"
+          # HEAD is the release commit, containing Chart.yaml and the matching package.
+          git tag -a "$VERSION" -m "Helm chart $VERSION"
           git push origin "refs/tags/$VERSION"
 
       - name: Create GitHub Release and attach chart archive
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.version.outputs.version }}
-          target_commitish: ${{ github.sha }}
           name: ${{ steps.version.outputs.version }}
           generate_release_notes: true
           files: komodo-${{ steps.version.outputs.version }}.tgz
