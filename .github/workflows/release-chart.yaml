@@ -89,3 +89,12 @@ jobs:
           set -euo pipefail
           git tag -a "$VERSION" "$SOURCE_SHA" -m "Helm chart $VERSION"
           git push origin "refs/tags/$VERSION"
+
+      - name: Create GitHub Release and attach chart archive
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          target_commitish: ${{ github.sha }}
+          name: ${{ steps.version.outputs.version }}
+          generate_release_notes: true
+          files: komodo-${{ steps.version.outputs.version }}.tgz
