@@ -22,6 +22,11 @@ komodo:
     enabled: false
     id: ""
     secret: ""
+  userRegistration:
+    enableNewUsers: false
+    disableUserRegistration: false
+    disableGoogleUserRegistration: false
+    disableLocalUserRegistration: false
   service:
     type: ClusterIP
     port: 9120

@@ -70,6 +70,20 @@ spec:
             - name: KOMODO_GOOGLE_OAUTH_SECRET
               valueFrom: { secretKeyRef: { name: {{ include "komodo.secretName" . }}, key: google-oauth-secret } }
             {{- end }}
+            - name: KOMODO_ENABLE_NEW_USERS
+              value: {{ .Values.komodo.userRegistration.enableNewUsers | quote }}
+            {{- if .Values.komodo.userRegistration.disableUserRegistration }}
+            - name: KOMODO_DISABLE_USER_REGISTRATION
+              value: "true"
+            {{- end }}
+            {{- if .Values.komodo.userRegistration.disableGoogleUserRegistration }}
+            - name: KOMODO_DISABLE_GOOGLE_USER_REGISTRATION
+              value: "true"
+            {{- end }}
+            {{- if .Values.komodo.userRegistration.disableLocalUserRegistration }}
+            - name: KOMODO_DISABLE_LOCAL_USER_REGISTRATION
+              value: "true"
+            {{- end }}
           readinessProbe:
             tcpSocket: { port: http }
             initialDelaySeconds: 10
