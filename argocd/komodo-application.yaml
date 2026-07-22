@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://antiantiops.github.io/komodo-helm-chart
     chart: komodo
-    targetRevision: 0.1.0
+    targetRevision: 0.1.6
     helm:
       releaseName: komodo
       values: |
@@ -18,19 +18,27 @@ spec:
           name: komodo-auth
 
         komodo:
-          host: http://komodo.nimtechnology.com
+          host: https://komodo.nimtechnology.com
           localAuth: true
           timezone: Asia/Ho_Chi_Minh
+          googleOAuth:
+            enabled: true
+          userRegistration:
+            enableNewUsers: false
           ingress:
             enabled: true
             className: nginx
-            annotations: {}
+            annotations:
+              cert-manager.io/cluster-issuer: selfsigned-cluster-issuer
             hosts:
               - host: komodo.nimtechnology.com
                 paths:
                   - path: /
                     pathType: Prefix
-            tls: []
+            tls:
+              - secretName: komodo-tls
+                hosts:
+                  - komodo.nimtechnology.com
           persistence:
             config:
               enabled: true
