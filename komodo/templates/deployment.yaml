@@ -62,6 +62,14 @@ spec:
               valueFrom: { secretKeyRef: { name: {{ include "komodo.secretName" . }}, key: komodo-passkey } }
             - name: KOMODO_WEBHOOK_SECRET
               valueFrom: { secretKeyRef: { name: {{ include "komodo.secretName" . }}, key: komodo-webhook-secret } }
+            {{- if .Values.komodo.googleOAuth.enabled }}
+            - name: KOMODO_GOOGLE_OAUTH_ENABLED
+              value: "true"
+            - name: KOMODO_GOOGLE_OAUTH_ID
+              valueFrom: { secretKeyRef: { name: {{ include "komodo.secretName" . }}, key: google-oauth-id } }
+            - name: KOMODO_GOOGLE_OAUTH_SECRET
+              valueFrom: { secretKeyRef: { name: {{ include "komodo.secretName" . }}, key: google-oauth-secret } }
+            {{- end }}
           readinessProbe:
             tcpSocket: { port: http }
             initialDelaySeconds: 10
