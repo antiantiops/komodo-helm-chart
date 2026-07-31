@@ -1,3 +1,4 @@
+{{- if eq .Values.mongo.mode "embedded" }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -38,7 +39,7 @@ spec:
               containerPort: 27017
           env:
             - name: MONGO_INITDB_ROOT_USERNAME
-              value: {{ .Values.mongo.auth.rootUsername | quote }}
+              value: {{ .Values.mongo.auth.username | quote }}
             - name: MONGO_INITDB_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -74,3 +75,4 @@ spec:
         - name: data
           emptyDir: {}
   {{- end }}
+{{- end }}

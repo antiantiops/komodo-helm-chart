@@ -1,3 +1,4 @@
+{{- if eq .Values.mongo.mode "embedded" }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -13,3 +14,4 @@ spec:
     app.kubernetes.io/name: {{ include "komodo.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/component: mongo
+{{- end }}

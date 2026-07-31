@@ -65,13 +65,20 @@ komodo:
   affinity: {}
 
 mongo:
+  # embedded: chart deploys MongoDB; external: use an existing Mongo-compatible endpoint.
+  mode: embedded
+
+  # Used only when mode: external.
+  host: ""
+  port: 27017
+
   image:
     repository: mongo
     tag: "8"
     pullPolicy: IfNotPresent
   auth:
-    rootUsername: komodo
-    rootPassword: ""
+    username: komodo
+    password: ""
   persistence:
     enabled: true
     size: 10Gi

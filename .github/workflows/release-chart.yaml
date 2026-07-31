@@ -60,14 +60,14 @@ jobs:
             --set komodo.auth.jwtSecret=ci-test \
             --set komodo.auth.passkey=ci-test \
             --set komodo.auth.webhookSecret=ci-test \
-            --set mongo.auth.rootPassword=ci-test
+            --set mongo.auth.password=ci-test
           helm template komodo komodo \
             --namespace komodo \
             --set komodo.auth.initAdminPassword=ci-test \
             --set komodo.auth.jwtSecret=ci-test \
             --set komodo.auth.passkey=ci-test \
             --set komodo.auth.webhookSecret=ci-test \
-            --set mongo.auth.rootPassword=ci-test \
+            --set mongo.auth.password=ci-test \
             > /tmp/komodo-manifests.yaml
           test -s /tmp/komodo-manifests.yaml
 
