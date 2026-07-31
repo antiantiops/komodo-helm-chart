@@ -51,6 +51,6 @@ jobs:
             --set mongo.host=mongo.example.com \
             --set mongo.port=27018 \
             > /tmp/komodo-external.yaml
-          '! grep -q "kind: StatefulSet" /tmp/komodo-external.yaml'
-          '! grep -q "clusterIP: None" /tmp/komodo-external.yaml'
+          ! grep -q 'kind: StatefulSet' /tmp/komodo-external.yaml
+          ! grep -q 'clusterIP: None' /tmp/komodo-external.yaml
           grep -q 'mongo.example.com:27018' /tmp/komodo-external.yaml
