@@ -23,7 +23,7 @@ jobs:
             --set komodo.auth.jwtSecret=ci-test \
             --set komodo.auth.passkey=ci-test \
             --set komodo.auth.webhookSecret=ci-test \
-            --set mongo.auth.rootPassword=ci-test
+            --set mongo.auth.password=ci-test
 
       - name: Render embedded mode
         run: |
@@ -33,7 +33,7 @@ jobs:
             --set komodo.auth.jwtSecret=ci-test \
             --set komodo.auth.passkey=ci-test \
             --set komodo.auth.webhookSecret=ci-test \
-            --set mongo.auth.rootPassword=ci-test \
+            --set mongo.auth.password=ci-test \
             > /tmp/komodo-embedded.yaml
           grep -q 'kind: StatefulSet' /tmp/komodo-embedded.yaml
           grep -q 'clusterIP: None' /tmp/komodo-embedded.yaml
@@ -46,7 +46,7 @@ jobs:
             --set komodo.auth.jwtSecret=ci-test \
             --set komodo.auth.passkey=ci-test \
             --set komodo.auth.webhookSecret=ci-test \
-            --set mongo.auth.rootPassword=ci-test \
+            --set mongo.auth.password=ci-test \
             --set mongo.mode=external \
             --set mongo.host=mongo.example.com \
             --set mongo.port=27018 \

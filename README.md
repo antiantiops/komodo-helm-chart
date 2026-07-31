@@ -14,7 +14,7 @@ helm upgrade --install komodo komodo/komodo \
   --set komodo.auth.jwtSecret='replace-with-random-secret' \
   --set komodo.auth.passkey='replace-with-random-secret' \
   --set komodo.auth.webhookSecret='replace-with-random-secret' \
-  --set mongo.auth.rootPassword='change-me'
+  --set mongo.auth.password='change-me'
 ```
 
 For production, place all secrets in an existing Secret and set `existingSecret.name`.

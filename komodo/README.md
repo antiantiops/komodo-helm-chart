@@ -25,7 +25,7 @@ helm upgrade --install komodo komodo/komodo \
   --set komodo.auth.jwtSecret='replace-with-a-random-value' \
   --set komodo.auth.passkey='replace-with-a-random-value' \
   --set komodo.auth.webhookSecret='replace-with-a-random-value' \
-  --set mongo.auth.rootPassword='change-me'
+  --set mongo.auth.password='change-me'
 ```
 
 ## Production secrets
@@ -41,6 +41,8 @@ metadata:
   namespace: komodo
 type: Opaque
 stringData:
+  # Historical key name retained for upgrade compatibility; this is the
+  # password for mongo.auth.username, not necessarily a root password.
   mongo-root-password: replace-me
   komodo-init-admin-password: replace-me
   komodo-jwt-secret: replace-me
@@ -84,8 +86,8 @@ Install with `helm upgrade --install komodo komodo/komodo -n komodo -f values-pr
 - `external`: this chart does not create MongoDB resources; Komodo connects to
   `mongo.host:mongo.port`.
 
-The existing credential model is unchanged in both modes: Komodo uses
-`mongo.auth.rootUsername` and the `mongo-root-password` key in the chart Secret
+The same app credential model is used in both modes: Komodo uses
+`mongo.auth.username` and the existing `mongo-root-password` key in the chart Secret
 or in `existingSecret.name`.
 
 Example external database configuration:
@@ -99,7 +101,7 @@ mongo:
   host: ferretdb.database.svc.cluster.local
   port: 27017
   auth:
-    rootUsername: komodo
+    username: komodo
 ```
 
 The external database/user must already exist and be reachable from the Komodo

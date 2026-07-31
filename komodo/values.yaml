@@ -77,8 +77,8 @@ mongo:
     tag: "8"
     pullPolicy: IfNotPresent
   auth:
-    rootUsername: komodo
-    rootPassword: ""
+    username: komodo
+    password: ""
   persistence:
     enabled: true
     size: 10Gi
