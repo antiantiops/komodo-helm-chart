@@ -54,3 +54,42 @@ jobs:
           ! grep -q 'kind: StatefulSet' /tmp/komodo-external.yaml
           ! grep -q 'clusterIP: None' /tmp/komodo-external.yaml
           grep -q 'mongo.example.com:27018' /tmp/komodo-external.yaml
+
+      - name: Reject invalid port 0
+        run: |
+          ! helm template komodo komodo \
+            --namespace komodo \
+            --set komodo.auth.initAdminPassword=ci-test \
+            --set komodo.auth.jwtSecret=ci-test \
+            --set komodo.auth.passkey=ci-test \
+            --set komodo.auth.webhookSecret=ci-test \
+            --set mongo.auth.password=ci-test \
+            --set mongo.mode=external \
+            --set mongo.host=mongo.example.com \
+            --set mongo.port=0
+
+      - name: Reject invalid port 65536
+        run: |
+          ! helm template komodo komodo \
+            --namespace komodo \
+            --set komodo.auth.initAdminPassword=ci-test \
+            --set komodo.auth.jwtSecret=ci-test \
+            --set komodo.auth.passkey=ci-test \
+            --set komodo.auth.webhookSecret=ci-test \
+            --set mongo.auth.password=ci-test \
+            --set mongo.mode=external \
+            --set mongo.host=mongo.example.com \
+            --set mongo.port=65536
+
+      - name: Reject non-numeric port
+        run: |
+          ! helm template komodo komodo \
+            --namespace komodo \
+            --set komodo.auth.initAdminPassword=ci-test \
+            --set komodo.auth.jwtSecret=ci-test \
+            --set komodo.auth.passkey=ci-test \
+            --set komodo.auth.webhookSecret=ci-test \
+            --set mongo.auth.password=ci-test \
+            --set mongo.mode=external \
+            --set mongo.host=mongo.example.com \
+            --set mongo.port=invalid
