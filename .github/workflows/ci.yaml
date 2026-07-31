@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: azure/setup-helm@v4
-      - name: Helm lint
+      - name: Helm lint (embedded)
         run: |
           helm lint komodo \
             --set komodo.auth.initAdminPassword=ci-test \
@@ -24,7 +24,8 @@ jobs:
             --set komodo.auth.passkey=ci-test \
             --set komodo.auth.webhookSecret=ci-test \
             --set mongo.auth.rootPassword=ci-test
-      - name: Render all templates
+
+      - name: Render embedded mode
         run: |
           helm template komodo komodo \
             --namespace komodo \
@@ -33,5 +34,23 @@ jobs:
             --set komodo.auth.passkey=ci-test \
             --set komodo.auth.webhookSecret=ci-test \
             --set mongo.auth.rootPassword=ci-test \
-            > /tmp/komodo-manifests.yaml
-          test -s /tmp/komodo-manifests.yaml
+            > /tmp/komodo-embedded.yaml
+          grep -q 'kind: StatefulSet' /tmp/komodo-embedded.yaml
+          grep -q 'clusterIP: None' /tmp/komodo-embedded.yaml
+
+      - name: Render external mode
+        run: |
+          helm template komodo komodo \
+            --namespace komodo \
+            --set komodo.auth.initAdminPassword=ci-test \
+            --set komodo.auth.jwtSecret=ci-test \
+            --set komodo.auth.passkey=ci-test \
+            --set komodo.auth.webhookSecret=ci-test \
+            --set mongo.auth.rootPassword=ci-test \
+            --set mongo.mode=external \
+            --set mongo.host=mongo.example.com \
+            --set mongo.port=27018 \
+            > /tmp/komodo-external.yaml
+          '! grep -q "kind: StatefulSet" /tmp/komodo-external.yaml'
+          '! grep -q "clusterIP: None" /tmp/komodo-external.yaml'
+          grep -q 'mongo.example.com:27018' /tmp/komodo-external.yaml

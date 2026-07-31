@@ -2,7 +2,8 @@
 
 [Komodo](https://komo.do/) is an open-source platform for deploying and managing
 servers, Docker workloads, repositories, builds, and alerts. This chart deploys
-**Komodo Core** together with a single-replica **MongoDB** database.
+**Komodo Core** together with a single-replica embedded **MongoDB** database by
+default. It can also use an external MongoDB-compatible endpoint.
 
 ## Prerequisites
 
@@ -74,6 +75,35 @@ mongo:
 ```
 
 Install with `helm upgrade --install komodo komodo/komodo -n komodo -f values-production.yaml`.
+
+## MongoDB modes
+
+`mongo.mode` selects where Komodo gets its database:
+
+- `embedded` (default): this chart creates the MongoDB StatefulSet and Service.
+- `external`: this chart does not create MongoDB resources; Komodo connects to
+  `mongo.host:mongo.port`.
+
+The existing credential model is unchanged in both modes: Komodo uses
+`mongo.auth.rootUsername` and the `mongo-root-password` key in the chart Secret
+or in `existingSecret.name`.
+
+Example external database configuration:
+
+```yaml
+existingSecret:
+  name: komodo-auth
+
+mongo:
+  mode: external
+  host: ferretdb.database.svc.cluster.local
+  port: 27017
+  auth:
+    rootUsername: komodo
+```
+
+The external database/user must already exist and be reachable from the Komodo
+namespace.
 
 ## Persistence
 

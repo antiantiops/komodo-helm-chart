@@ -1,3 +1,4 @@
+{{- include "komodo.validateMongo" . }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -47,7 +48,7 @@ spec:
             - name: KOMODO_LOCAL_AUTH
               value: {{ .Values.komodo.localAuth | quote }}
             - name: KOMODO_DATABASE_ADDRESS
-              value: {{ printf "%s:27017" (include "komodo.mongoName" .) | quote }}
+              value: {{ include "komodo.mongoAddress" . | quote }}
             - name: KOMODO_DATABASE_USERNAME
               value: {{ .Values.mongo.auth.rootUsername | quote }}
             - name: KOMODO_DATABASE_PASSWORD
