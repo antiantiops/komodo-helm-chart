@@ -28,6 +28,12 @@ export PASSKEY=$(openssl rand -base64 32)
 export WEBHOOK_SECRET=$(openssl rand -base64 32)
 ```
 
+**For external secret managers (AWS SSM, External Secrets Operator):** If you store secrets in AWS Systems Manager Parameter Store or use External Secrets Operator, generate raw (non-base64) values instead, as these services will base64-encode automatically when syncing to Kubernetes:
+
+```bash
+openssl rand -hex 32
+```
+
 Then use these values in your Helm install command:
 
 ```bash
