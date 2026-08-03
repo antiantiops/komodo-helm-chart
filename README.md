@@ -2,6 +2,47 @@
 
 Helm chart to deploy [Komodo](https://komo.do/) Core with MongoDB on Kubernetes.
 
+## Generate random secrets
+
+Before installing the chart, generate secure random values for the Komodo authentication secrets.
+
+You can generate a secret using `openssl`:
+
+```bash
+openssl rand -base64 32
+```
+
+Generate four values and use them for:
+
+- `komodo.auth.initAdminPassword`
+- `komodo.auth.jwtSecret`
+- `komodo.auth.passkey`
+- `komodo.auth.webhookSecret`
+
+Example:
+
+```bash
+export ADMIN_PASSWORD=$(openssl rand -base64 32)
+export JWT_SECRET=$(openssl rand -base64 32)
+export PASSKEY=$(openssl rand -base64 32)
+export WEBHOOK_SECRET=$(openssl rand -base64 32)
+```
+
+Then use these values in your Helm install command:
+
+```bash
+helm upgrade --install komodo komodo/komodo \
+  --namespace komodo --create-namespace \
+  --set komodo.host=https://komodo.example.com \
+  --set komodo.auth.initAdminPassword="$ADMIN_PASSWORD" \
+  --set komodo.auth.jwtSecret="$JWT_SECRET" \
+  --set komodo.auth.passkey="$PASSKEY" \
+  --set komodo.auth.webhookSecret="$WEBHOOK_SECRET" \
+  --set mongo.auth.password='change-me'
+```
+
+Keep these values private and do not commit them to version control.
+
 ## Install
 
 ```bash
