@@ -32,7 +32,7 @@ spec:
       {{- end }}
       containers:
         - name: komodo-core
-          image: "{{ .Values.komodo.image.repository }}:{{ .Values.komodo.image.tag }}"
+          image: "{{ .Values.komodo.image.repository }}:{{ .Values.komodo.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.komodo.image.pullPolicy }}
           args: [core]
           securityContext:

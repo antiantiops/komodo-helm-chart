@@ -6,7 +6,7 @@ existingSecret:
 komodo:
   image:
     repository: ghcr.io/moghtech/komodo-core
-    tag: "2.2.0"
+    tag: ""
     pullPolicy: IfNotPresent
   replicas: 1
   host: "http://komodo.local"
