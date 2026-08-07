@@ -7,6 +7,7 @@ on:
     paths-ignore:
       - index.yaml
       - '*.tgz'
+  workflow_dispatch: {}
 
 # Prevent two master pushes from selecting the same latest tag concurrently.
 concurrency:

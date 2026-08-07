@@ -1,0 +1,67 @@
+name: Watch upstream Docker image
+
+on:
+  schedule:
+    - cron: '15 */6 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get current appVersion from Chart.yaml
+        id: current
+        run: |
+          VERSION=$(grep '^appVersion:' komodo/Chart.yaml | awk '{print $2}' | tr -d '"')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Fetch latest stable tag from GitHub
+        id: latest
+        run: |
+          LATEST=$(curl -sS "https://api.github.com/repos/moghtech/komodo/releases/latest" | jq -r '.tag_name' | sed 's/^v//')
+          echo "version=$LATEST" >> "$GITHUB_OUTPUT"
+
+      - name: Compare versions
+        id: compare
+        run: |
+          if [ "${{ steps.current.outputs.version }}" = "${{ steps.latest.outputs.version }}" ]; then
+            echo "up_to_date=true" >> "$GITHUB_OUTPUT"
+            echo "Already up to date: ${{ steps.current.outputs.version }}"
+          else
+            echo "up_to_date=false" >> "$GITHUB_OUTPUT"
+            echo "Update available: ${{ steps.current.outputs.version }} → ${{ steps.latest.outputs.version }}"
+          fi
+
+      - name: Update Chart.yaml
+        if: steps.compare.outputs.up_to_date == 'false'
+        run: |
+          sed -i "s/^appVersion: .*/appVersion: \"${{ steps.latest.outputs.version }}\"/" komodo/Chart.yaml
+
+      - name: Commit and push
+        if: steps.compare.outputs.up_to_date == 'false'
+        env:
+          CURRENT: ${{ steps.current.outputs.version }}
+          LATEST: ${{ steps.latest.outputs.version }}
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add komodo/Chart.yaml
+          git commit -m "chore: bump komodo appVersion ${CURRENT} → ${LATEST}"
+          git push origin HEAD:master
+
+      - name: Trigger release workflow
+        if: steps.compare.outputs.up_to_date == 'false'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl -sS -X POST \
+            -H "Authorization: token ${GITHUB_TOKEN}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/release-chart.yaml/dispatches" \
+            -d '{"ref":"master"}'
