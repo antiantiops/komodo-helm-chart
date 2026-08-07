@@ -84,10 +84,10 @@ jobs:
           set -euo pipefail
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git fetch origin master
-          git rebase origin/master || git rebase --abort
           git add komodo/Chart.yaml index.yaml "komodo-${VERSION}.tgz"
-          git commit -m "chore: release chart ${VERSION}" || true
+          git commit -m "chore: release chart ${VERSION}"
+          git fetch origin master
+          git rebase origin/master || (git rebase --abort && git pull --rebase origin master)
           git push origin HEAD:master
 
       - name: Create source tag
