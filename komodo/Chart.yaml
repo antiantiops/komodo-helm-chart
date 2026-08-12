@@ -2,7 +2,7 @@ apiVersion: v2
 name: komodo
 description: Komodo Core with MongoDB
 version: 0.1.13
-appVersion: "2.3.1"
+appVersion: "2.3.2"
 type: application
 keywords:
   - komodo
