@@ -2,8 +2,28 @@ apiVersion: v1
 entries:
   komodo:
   - apiVersion: v2
+    appVersion: 2.3.3
+    created: "2026-09-10T11:21:50.261973903Z"
+    description: Komodo Core with MongoDB
+    digest: 2c5ec67cc2e66f40950626acc1964dbc22549125d99e0695f842de82887a9319
+    home: https://komo.do/
+    icon: https://raw.githubusercontent.com/moghtech/komodo/main/ui/public/apple-touch-icon.png
+    keywords:
+    - komodo
+    - mongodb
+    - devops
+    maintainers:
+    - name: antiantiops
+    name: komodo
+    sources:
+    - https://github.com/moghtech/komodo
+    type: application
+    urls:
+    - https://antiantiops.github.io/komodo-helm-chart/komodo-0.1.23.tgz
+    version: 0.1.23
+  - apiVersion: v2
     appVersion: "null"
-    created: "2026-09-10T04:44:39.761337769Z"
+    created: "2026-09-10T11:21:50.261516454Z"
     description: Komodo Core with MongoDB
     digest: 90517422c54be7a4872eceeabd8073b42751f3b9eae73e43cd434e2ba058aa4d
     home: https://komo.do/
@@ -23,7 +43,7 @@ entries:
     version: 0.1.22
   - apiVersion: v2
     appVersion: 2.3.3
-    created: "2026-09-10T04:44:39.760858567Z"
+    created: "2026-09-10T11:21:50.261099156Z"
     description: Komodo Core with MongoDB
     digest: afe53a99b7752925320ca62c5b4bbe63cc30a85cb783b9d8a9dc99903ffb6fff
     home: https://komo.do/
@@ -43,7 +63,7 @@ entries:
     version: 0.1.21
   - apiVersion: v2
     appVersion: "null"
-    created: "2026-09-10T04:44:39.7604245Z"
+    created: "2026-09-10T11:21:50.26062311Z"
     description: Komodo Core with MongoDB
     digest: a7fd02cd89832282f8101f41024d2432d48bc6bc1e17ccd139bac811fa5649cc
     home: https://komo.do/
@@ -63,7 +83,7 @@ entries:
     version: 0.1.20
   - apiVersion: v2
     appVersion: 2.3.3
-    created: "2026-09-10T04:44:39.75954766Z"
+    created: "2026-09-10T11:21:50.259750647Z"
     description: Komodo Core with MongoDB
     digest: 1175fd8e3aefe2ab809be01d30252891f0c0ec917b0f14ce28fdbf51838b1fa9
     home: https://komo.do/
@@ -83,7 +103,7 @@ entries:
     version: 0.1.19
   - apiVersion: v2
     appVersion: "null"
-    created: "2026-09-10T04:44:39.759039094Z"
+    created: "2026-09-10T11:21:50.259250144Z"
     description: Komodo Core with MongoDB
     digest: b598ba32b7bd79301423f1f5f12b8a084d4a89206992330490d5ec46d7b34a32
     home: https://komo.do/
@@ -103,7 +123,7 @@ entries:
     version: 0.1.18
   - apiVersion: v2
     appVersion: 2.3.3
-    created: "2026-09-10T04:44:39.757849754Z"
+    created: "2026-09-10T11:21:50.258798073Z"
     description: Komodo Core with MongoDB
     digest: 82ac9f38bd065cb744f426d42dc4d8b8d3a49366256cc16655cea4c882f05319
     home: https://komo.do/
@@ -123,7 +143,7 @@ entries:
     version: 0.1.17
   - apiVersion: v2
     appVersion: 2.3.2
-    created: "2026-09-10T04:44:39.756892191Z"
+    created: "2026-09-10T11:21:50.258306754Z"
     description: Komodo Core with MongoDB
     digest: e91e7cc92f8d448fdb97a90fe071f5a428fdadc0365c82916d7f06b02b971fec
     home: https://komo.do/
@@ -143,7 +163,7 @@ entries:
     version: 0.1.16
   - apiVersion: v2
     appVersion: "null"
-    created: "2026-09-10T04:44:39.756440891Z"
+    created: "2026-09-10T11:21:50.257821834Z"
     description: Komodo Core with MongoDB
     digest: f050a42b07f2af07915a3835757858f602cba324210b9c229f45bb1c60918658
     home: https://komo.do/
@@ -163,7 +183,7 @@ entries:
     version: 0.1.15
   - apiVersion: v2
     appVersion: 2.3.2
-    created: "2026-09-10T04:44:39.7559239Z"
+    created: "2026-09-10T11:21:50.257346068Z"
     description: Komodo Core with MongoDB
     digest: 241f53dbc2e202b39b0a8dae65099f1f8848037e7d8d2bfaa8c09e181987959e
     home: https://komo.do/
@@ -183,7 +203,7 @@ entries:
     version: 0.1.14
   - apiVersion: v2
     appVersion: 2.3.1
-    created: "2026-09-10T04:44:39.755478953Z"
+    created: "2026-09-10T11:21:50.25688919Z"
     description: Komodo Core with MongoDB
     digest: b00b7180a346ee6e67392aa2107b52ded780c3bd357c83ea0eb9b98c30468cd1
     home: https://komo.do/
@@ -203,7 +223,7 @@ entries:
     version: 0.1.13
   - apiVersion: v2
     appVersion: "null"
-    created: "2026-09-10T04:44:39.754957363Z"
+    created: "2026-09-10T11:21:50.256352162Z"
     description: Komodo Core with MongoDB
     digest: 62292c61168a3e43813afe98c300f77a4ed368d3ba379a2d6a63187fceac5b89
     home: https://komo.do/
@@ -223,7 +243,7 @@ entries:
     version: 0.1.12
   - apiVersion: v2
     appVersion: 2.3.1
-    created: "2026-09-10T04:44:39.754454287Z"
+    created: "2026-09-10T11:21:50.255416884Z"
     description: Komodo Core with MongoDB
     digest: b96039faf3132607206e027d1fc002b738fead990de6c9915fddc0eadd506969
     home: https://komo.do/
@@ -243,7 +263,7 @@ entries:
     version: 0.1.11
   - apiVersion: v2
     appVersion: 2.3.1
-    created: "2026-09-10T04:44:39.753894706Z"
+    created: "2026-09-10T11:21:50.254139552Z"
     description: Komodo Core with MongoDB
     digest: 05d927d373987a1568e8d1f072cbe31b66da5b5d031cca8e719fe1365b820b4a
     home: https://komo.do/
@@ -263,7 +283,7 @@ entries:
     version: 0.1.10
   - apiVersion: v2
     appVersion: 2.2.0
-    created: "2026-09-10T04:44:39.764339441Z"
+    created: "2026-09-10T11:21:50.267284936Z"
     description: Komodo Core with MongoDB
     digest: 937d42b82f93222d61d797882491c1c56b3388c8988e910f4dfe5206a5169045
     home: https://komo.do/
@@ -283,7 +303,7 @@ entries:
     version: 0.1.9
   - apiVersion: v2
     appVersion: 2.2.0
-    created: "2026-09-10T04:44:39.763867393Z"
+    created: "2026-09-10T11:21:50.266832355Z"
     description: Komodo Core with MongoDB
     digest: b39fc0b352836cc70cec9c0796ad77b27e0f61954770f8ce92bea9ff8028f527
     home: https://komo.do/
@@ -303,7 +323,7 @@ entries:
     version: 0.1.8
   - apiVersion: v2
     appVersion: 2.2.0
-    created: "2026-09-10T04:44:39.763380798Z"
+    created: "2026-09-10T11:21:50.266345662Z"
     description: Komodo Core with MongoDB
     digest: 1bcb033be4ac3737842b44745accedc9ba418381529e98b40bec9b907add9f83
     home: https://komo.do/
@@ -323,7 +343,7 @@ entries:
     version: 0.1.7
   - apiVersion: v2
     appVersion: 2.2.0
-    created: "2026-09-10T04:44:39.762939768Z"
+    created: "2026-09-10T11:21:50.265521121Z"
     description: Komodo Core with MongoDB
     digest: 73dd78d2eff9216fb45096b0c9ec1d5953c8143745e3c2f5a3afea285dccd008
     home: https://komo.do/
@@ -343,7 +363,7 @@ entries:
     version: 0.1.6
   - apiVersion: v2
     appVersion: 2.2.0
-    created: "2026-09-10T04:44:39.762515789Z"
+    created: "2026-09-10T11:21:50.264475858Z"
     description: Komodo Core with MongoDB
     digest: 7cb8e77811748ba8fb278763ee68491f96584e59c4cd3e3460f410d8e6d673bd
     home: https://komo.do/
@@ -363,7 +383,7 @@ entries:
     version: 0.1.5
   - apiVersion: v2
     appVersion: 2.2.0
-    created: "2026-09-10T04:44:39.762100828Z"
+    created: "2026-09-10T11:21:50.263489904Z"
     description: Komodo Core with MongoDB
     digest: 748c165ad7717b691484493823c599b730a8f3282f44517f9f4aaf26ec926c2f
     home: https://komo.do/
@@ -383,7 +403,7 @@ entries:
     version: 0.1.4
   - apiVersion: v2
     appVersion: 2.2.0
-    created: "2026-09-10T04:44:39.761722204Z"
+    created: "2026-09-10T11:21:50.262376509Z"
     description: Komodo Core with MongoDB
     digest: 24b375c808634683bcb18f989ab90790365e2d97ba4a9b1e889011b4d40982de
     home: https://komo.do/
@@ -403,7 +423,7 @@ entries:
     version: 0.1.3
   - apiVersion: v2
     appVersion: 2.2.0
-    created: "2026-09-10T04:44:39.759953684Z"
+    created: "2026-09-10T11:21:50.260156948Z"
     description: Komodo Core with MongoDB
     digest: 96d50faeeec0fe08ce407c5b6c42e2e603c7a1dfde4c90ca7af3f17812c6efa3
     home: https://komo.do/
@@ -423,7 +443,7 @@ entries:
     version: 0.1.2
   - apiVersion: v2
     appVersion: 2.2.0
-    created: "2026-09-10T04:44:39.753395558Z"
+    created: "2026-09-10T11:21:50.253618628Z"
     description: Komodo Core with MongoDB
     digest: e5ea5c9caee77e19ef516d1beaa62c35c4417d29a04eef7671caf69a09f48ad9
     home: https://komo.do/
@@ -443,7 +463,7 @@ entries:
     version: 0.1.1
   - apiVersion: v2
     appVersion: 2.2.0
-    created: "2026-09-10T04:44:39.752888445Z"
+    created: "2026-09-10T11:21:50.253178565Z"
     description: Komodo Core with MongoDB
     digest: c507a36f2116838083f51561ed5e7b3bc3f302efe3bf0e0e5c6c00a8991ea433
     home: https://komo.do/
@@ -461,4 +481,4 @@ entries:
     urls:
     - https://antiantiops.github.io/komodo-helm-chart/komodo-0.1.0.tgz
     version: 0.1.0
-generated: "2026-09-10T04:44:39.752333994Z"
+generated: "2026-09-10T11:21:50.25254373Z"
