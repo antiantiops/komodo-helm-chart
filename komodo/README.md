@@ -12,6 +12,53 @@ default. It can also use an external MongoDB-compatible endpoint.
 - A default StorageClass, or a `storageClass` set for every enabled persistent volume
 - An Ingress controller when `komodo.ingress.enabled=true`
 
+## Generate random secrets
+
+Before installing the chart, generate secure random values for the Komodo authentication secrets.
+
+You can generate a secret using `openssl`:
+
+```bash
+openssl rand -base64 32
+```
+
+Generate four values and use them for:
+
+- `komodo.auth.initAdminPassword`
+- `komodo.auth.jwtSecret`
+- `komodo.auth.passkey`
+- `komodo.auth.webhookSecret`
+
+Example:
+
+```bash
+export ADMIN_PASSWORD=$(openssl rand -base64 32)
+export JWT_SECRET=$(openssl rand -base64 32)
+export PASSKEY=$(openssl rand -base64 32)
+export WEBHOOK_SECRET=$(openssl rand -base64 32)
+```
+
+**For external secret managers (AWS SSM, External Secrets Operator):** If you store secrets in AWS Systems Manager Parameter Store or use External Secrets Operator, generate raw (non-base64) values instead, as these services will base64-encode automatically when syncing to Kubernetes:
+
+```bash
+openssl rand -hex 32
+```
+
+Then use these values in your Helm install command:
+
+```bash
+helm upgrade --install komodo komodo/komodo \
+  --namespace komodo --create-namespace \
+  --set komodo.host=https://komodo.example.com \
+  --set komodo.auth.initAdminPassword="$ADMIN_PASSWORD" \
+  --set komodo.auth.jwtSecret="$JWT_SECRET" \
+  --set komodo.auth.passkey="$PASSKEY" \
+  --set komodo.auth.webhookSecret="$WEBHOOK_SECRET" \
+  --set mongo.auth.password='change-me'
+```
+
+Keep these values private and do not commit them to version control.
+
 ## Install
 
 ```bash
@@ -90,6 +137,14 @@ The same app credential model is used in both modes: Komodo uses
 `mongo.auth.username` and the existing `mongo-root-password` key in the chart Secret
 or in `existingSecret.name`.
 
+### Using an external MongoDB instance
+
+Use an external MongoDB deployment when you already have a managed MongoDB service (such as MongoDB Atlas), an organization-wide MongoDB cluster, or a production database environment managed separately from Kubernetes.
+
+When using `mongo.mode=external`, the chart will not create a MongoDB StatefulSet. Instead, the application connects to the MongoDB instance configured through `mongo.host`, `mongo.port`, and authentication settings.
+
+**Connection format:** The chart configures Komodo with individual connection parameters (`host:port`, username, password) rather than a MongoDB connection URI. The Komodo application determines the database name internally; this chart does not expose a `mongo.database` configuration value.
+
 Example external database configuration:
 
 ```yaml
@@ -98,7 +153,7 @@ existingSecret:
 
 mongo:
   mode: external
-  host: ferretdb.database.svc.cluster.local
+  host: mongodb-prod.example.com
   port: 27017
   auth:
     username: komodo
@@ -106,6 +161,66 @@ mongo:
 
 The external database/user must already exist and be reachable from the Komodo
 namespace.
+
+Install or upgrade with the external configuration:
+
+```bash
+helm upgrade --install komodo komodo/komodo \
+  --namespace komodo \
+  --create-namespace \
+  -f values-external-mongo.yaml
+```
+
+### External MongoDB requirements
+
+Before deploying Komodo with an external MongoDB instance, verify the following:
+
+| Requirement | Description |
+|---|---|
+| Network connectivity | Kubernetes workloads must be able to reach the MongoDB host and port (`27017` by default). |
+| Firewall rules | Allow inbound MongoDB traffic only from trusted Kubernetes node/network ranges. |
+| Authentication | Create a dedicated MongoDB user for Komodo with required database permissions. |
+| Database access | Ensure the configured user has access to the Komodo application database. |
+| MongoDB version | Use a MongoDB version compatible with the Komodo application requirements. |
+| TLS configuration | Enable TLS for production MongoDB deployments whenever supported by the environment. |
+| Credentials | Store MongoDB credentials securely using Kubernetes Secrets or an external secrets manager. |
+| DNS resolution | The Kubernetes cluster must be able to resolve the configured MongoDB hostname. |
+| Connection limits | Ensure MongoDB connection limits are sized for the expected Komodo workload. |
+
+### External MongoDB best practices
+
+| Area | Recommendation |
+|---|---|
+| Security | Use TLS encryption and restrict MongoDB network access to only required clients. |
+| Authentication | Use a dedicated MongoDB account instead of shared administrative users. |
+| Credentials management | Avoid committing passwords into Git; use Kubernetes Secrets or secret management solutions. |
+| Backup | Configure regular MongoDB backups and verify restore procedures before production use. |
+| High availability | Use MongoDB replica sets or managed MongoDB services for production workloads. |
+| Monitoring | Enable MongoDB metrics monitoring, alerts, and slow query analysis. |
+| Performance | Monitor CPU, memory, storage latency, and connection usage. |
+| Disaster recovery | Document recovery procedures and test failover scenarios periodically. |
+
+### FAQ
+
+#### Can I use MongoDB Atlas with `mongo.mode=external`?
+
+Yes. Configure the Atlas cluster connection endpoint as `mongo.host` and ensure the Kubernetes cluster can access the Atlas network endpoint.
+
+#### Will the Helm chart create MongoDB resources in external mode?
+
+No. When `mongo.mode=external` is enabled, the chart only configures the application to connect to the existing MongoDB instance.
+
+#### What happens if the MongoDB credentials are incorrect?
+
+The Komodo application will fail to connect to MongoDB. Check application logs and verify the username, password, database permissions, and network connectivity.
+
+#### Can I migrate from embedded MongoDB to an external MongoDB instance?
+
+Yes. Migration requires exporting data from the embedded MongoDB instance and importing it into the external MongoDB deployment before switching `mongo.mode` to `external`.
+
+#### Should I use external MongoDB in production?
+
+For production environments, an externally managed MongoDB cluster is recommended because it provides better backup, availability, security, and operational control compared with running MongoDB inside the application Helm release.
 
 ## Persistence
 
